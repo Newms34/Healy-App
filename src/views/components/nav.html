@@ -1,0 +1,28 @@
+<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation" ng-controller='nav-cont'>
+    <div class="navbar-brand">
+            <div class='is-italic is-size-5 has-background-grey-darker is-fullwidth has-text-centered is-hidden-desktop' style='line-height:3.25rem'>
+                    Welcome, {{$parent.user.displayName||$parent.user.user}}
+                </div>
+        <a role="button" class="navbar-burger has-text-white" ng-class='{"is-active":mobActive}' aria-label="menu"
+            aria-expanded="false" ng-click='mobActive=!mobActive'>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="navbar-menu has-background-grey-darker" ng-class='{"is-active":mobActive}' ng-click='mobActive=false'>
+        <div class="navbar-start">
+            <a class="navbar-item has-text-white" ng-if='!nv.protected || ($parent.user && $parent.user.mod)' ng-repeat ='nv in navEls' href='#' ng-class='{"has-background-grey-dark no-poke":currState==nv.st}' ng-click='goState(nv.st)'>
+                <h3><i class="fa fa-{{nv.icon}}"></i>&nbsp;{{nv.text}}</h3>
+            </a>
+        </div>
+        <div class='is-italic is-size-5 has-background-grey-darker is-hidden-touch' style='line-height:3.25rem'>
+            Welcome, {{$parent.user.displayName||$parent.user.user}}
+        </div>
+        <div class="navbar-end">
+            <a class="navbar-item has-text-white is-pulled-right" ng-click='logout()'>
+                <h3><i class="fa fa-sign-out"></i>&nbsp;Logout</h3>
+            </a>
+        </div>
+    </div>
+</nav>

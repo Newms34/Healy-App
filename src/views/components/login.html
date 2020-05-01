@@ -1,0 +1,43 @@
+<div ng-controller='log-cont' class='columns'>
+    <div class="column is-one-third"></div>
+    <div class='column is-one-third card'>
+        <div class='card-header'>
+            <h3 class='card-header-title'>Login</h3>
+        </div>
+        <div class='card-content'>
+            <form>
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" type="text" placeholder="Username" ng-model='user'>
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" type="password" placeholder="Password" ng-model='pwd'>
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                    </p>
+                </div>
+                <a class='col-md-offset-2' href="#" ng-click='forgot()'>Forgot your password?</a>
+                <div class='is-fullwidth'>
+                    <hr/>
+                </div>
+                <button class='button is-link is-fullwidth-btn-mobile' type='submit' ng-click='signin()'>Login</button>
+                <button class='button is-info is-fullwidth-btn-mobile' ng-click='goReg()'>Create account instead</button>
+                <hr>
+                <div class="is-fullwidth has-text-centered">
+                        <div class="button is-info is-large" style='padding:4px' ng-click='googLog();'>
+                            <div class="is-fullwidth">
+                                <img src="./img/btn_google_dark_normal_ios.svg" class='is-pulled-left' style='left:0;'>
+                                <span style='display:inline-block; vertical-align: center; font-family:"Roboto";'>Sign in with Google</span>
+                            </div>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>

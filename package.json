@@ -1,0 +1,21 @@
+{
+  "name": "healyappgen",
+  "version": "0.0.1",
+  "description": "App Generator for Dave",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "David Newman",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "googleapis": "^49.0.0",
+    "prompts": "^2.3.2",
+    "rimraf": "^3.0.2"
+  },
+  "bin": {
+    "healy-app": "./healy-server.js"
+  }
+}

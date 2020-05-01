@@ -1,0 +1,6 @@
+{
+    "google":{
+        "clientID":"YOUR CLIENT ID",
+        "secret":"YOUR CLIENT SECRET"
+    }
+}

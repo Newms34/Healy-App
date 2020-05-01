@@ -1,0 +1,6 @@
+Stuff to do:
+
+REPLACE:
+MONGO-STORE-URL: the storage location
+MONGO-EXE-URL: the mongoDB server exe
+

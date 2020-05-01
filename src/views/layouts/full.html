@@ -1,0 +1,8 @@
+<div ng-controller='main-cont' id='full-win'>
+    <style ng-bind-html='sc'></style>
+    <style ng-bind-html='col'></style>
+    <div ng-include="'/components/nav.html'"></div>
+    <div id='main-box' style='{{bgFull}}'>
+        <ui-view></ui-view>
+    </div>
+</div>

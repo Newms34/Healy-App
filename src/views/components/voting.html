@@ -1,0 +1,51 @@
+<div ng-controller='vote-cont'>
+    <div class="message">
+        <div class="message-header">Voting</div>
+        <div class="message-body">
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Skill</th>
+                        <th>Description</th>
+                        <th>Vote</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if='!voteItems.length'>
+                        <td colspan='3' class='is-italic'>No new skills are currently up for voting!</td>
+                    </tr>
+                    <tr ng-repeat='v in voteItems'>
+                        <td>{{v.title}}</td>
+                        <td>{{v.desc}}</td>
+                        <td>{{getScore(v)}}&nbsp;
+                            <button ng-click='submitVote(1,v)' class="button is-small is-success"><i class="fa fa-thumbs-up"></i></button>
+                            <button ng-click='submitVote(-1,v)' class="button is-small is-somewhat-dangerous"><i class="fa fa-thumbs-down"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal" ng-class='{"is-active":mailView.show}'>
+        <div class="modal-background" ng-click='mailView.show=false'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> {{mailView.title}} <button class="button is-somewhat-dangerous is-small is-pulled-right" ng-click='mailView.show=false'>x</button> </div>
+                <div class="panel-block blocky has-background-grey-lighter content">
+                    <div class="is-fullwidth has-text-centered">
+                        <button class="button is-small is-info" title='Reply to this message' ng-click="replyMsg(mailView)" ng-if='!mailView.toMode'><i class="fa fa-mail-reply"></i>&nbsp;Reply</button> &nbsp;
+                        <button class="button is-small is-danger" title='{{mailView.isRep?"This message has already been reported!":"Report this message to the moderator team"}}' ng-disabled='mailView.isRep' ng-click="reportMsg(mailView)" ng-if='!mailView.toMode'><i class="fa fa-exclamation-circle"></i>&nbsp;Report</button> &nbsp;
+                        <button class="button is-small is-somewhat-dangerous" title='Delete this message' ng-click="delMsg(mailView)"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+                    </div>
+                    <div class="is-fullwidth"><strong>Sent:</strong>&nbsp;{{mailView.date|numToDate}}</div>
+                    <hr>
+                    <div class="has-background-white mail-view contents" ng-bind-html='mailView.htmlMsg'> </div>
+                    <div class="is-fullwidth has-text-centered" ng-if='!mailView.toMode && mailView.isConMsg'>
+                        <br>
+                        <button class="button is-info is-large" title='Start Teaching!' ng-click="startTeach(mailView)"><i class="fa fa-graduation-cap"></i>&nbsp;Teach!</button><button class="button is-small is-default" ng-click='explStartTeach()'>?</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

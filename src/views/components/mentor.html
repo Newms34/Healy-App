@@ -1,0 +1,85 @@
+<div ng-controller='mentor-cont'>
+    <div class="message">
+        <div class="message-header"> Mentoring </div>
+        <div class="message-body blocky is-fullwidth">
+            <div class="columns">
+                
+                <div class="column is-two-fifths message">
+                    <div class="message-header">Ratings</div>
+                    <div class="message-body has-background-white">
+                        <div class="is-fullwidth notification has-text-centered" ng-if='!$parent.user.ratings.length'>
+                            <i class="fa fa-exclamation-circle is-size-4"></i>&nbsp;No one has rated you yet! That may or may not be a good thing...
+                        </div>
+                        <div class="is-fullwidth columns is-multiline" ng-show='$parent.user.ratings.length'>
+                            <div class="column is-{{$parent.user.ratings.length==1?'full':'half'}}" ng-repeat='rv in $parent.user.ratings'>
+                                <div class="message is-info">
+                                    <div class="message-header"></div>
+                                    <div class="message-body has-background-grey-lighter">
+                                        <div class="is-fullwidth notification">
+                                            <div class="is-fullwidth is-italic">
+                                                "{{rv.rateText||'...'}}"
+                                            </div>
+                                             - {{!rv.hideName?(rv.rateUsr.displayName||rv.rateUsr.user):'(Anonymous)'}}
+                                        </div>
+                                        <div class="is-fullwidth" title='This user gave you a rating of {{rv.rateNum}} out of 5 stars.'>
+                                            <div class="" style='display:inline-block' ng-repeat='st in totalStars'>
+                                                <i class="fa fa-{{$index>rv.rateNum-1?'star-o':'star'}}"></i>
+                                            </div>
+                                        </div>
+                                        <div class="is-fullwidth has-text-centered">
+                                            <button class="button is-small is-link" ng-if='!rv.hideName' title='Send this student a message about this rating'><i class="fa fa-envelope" ng-if='!hideName'></i>&nbsp;Send Message</button>
+                                            <button class="button is-small is-info" title='Report this rating'><i class="fa fa-exclamation-circle"></i>&nbsp;Report</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-three-fifths message">
+                    <div class="message-header">Lesson Control</div>
+                    <div class="message-body has-background-white">
+                        <div class="is-fullwidth notification has-text-centered" ng-if='!$parent.user.teaching.length'>
+                            <i class="fa fa-exclamation-circle is-size-4"></i>&nbsp;You are not currently mentoring anyone (that we know of)!
+                        </div>
+                        <div class="is-fullwidth columns is-multiline" ng-show='$parent.user.teaching.length'>
+                            <div class="column is-{{$parent.user.teaching.length==1?'full':'half'}}" ng-repeat='ls in $parent.user.teaching' ng-show='!ls.deleted'>
+                                <div class="message is-link">
+                                    <div class="message-header"></div>
+                                    <div class="message-body has-background-grey-lighter">
+                                        <div class="is-fullwidth">
+                                            <strong>Student:</strong> {{ls.user.displayName||ls.user.user}}
+                                        </div>
+                                        <div class="is-fullwidth content">
+                                            <strong>Topics:</strong>
+                                            <ul>
+                                                <li ng-repeat='t in ls.topics'>{{t}}</li>
+                                            </ul>
+                                        </div>
+                                        <div class="is-fullwidth has-text-centered">
+                                            <button class="button is-small is-link" ng-click='messageUser(ls)' title="Send a message to {{ls.user.displayName||ls.user.user}} that you'd like to talk to them."><i class="fa fa-envelope"></i>&nbsp;Send Message</button>
+                                            <button class="button is-small is-info" title ='{{!!ls.active?"Deactivate":"Activate"}} this lesson' ng-click='toggleActive(ls)'><i class="fa fa-{{ls.active?'times':'check'}}"></i>&nbsp;{{ls.active?'Deactivate':'Activate'}}</button>
+                                            <button class="button is-small is-dark" ng-click='toggleHide(ls)' title='{{ls.hidden?"Unhide":"Hide"}} this lesson'><i class="fa fa-eye{{ls.hidden?'':'-slash'}}"></i>&nbsp;{{ls.hidden?'Unhide':'Hide'}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+    <!-- <div class="modal" ng-class='{"is-active":modProj.show==true}'>
+        <div class="modal-background" ng-click='modProj.show=false'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> MODAL TITLE</div>
+                <div class="panel-block has-background-white blocky content">
+                    MODAL BODY AND STUFF
+                </div>
+            </div>
+        </div>
+    </div> -->
+</div>

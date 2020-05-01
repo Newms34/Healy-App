@@ -1,0 +1,114 @@
+<div ng-controller='mod-cont'>
+    <div class="message">
+        <div class="message-header">Moderator Controls</div>
+        <div class="message-body"><table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username (if different)</th>
+                        <th>Ban Status</th>
+                        <th>Skills</th>
+                        <th>Currently Mentoring</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat='u in allUsrs'>
+                        <td><i class="fa fa-lock" ng-if='u.mod' title='This user is a moderator'>&nbsp;</i>{{u.displayName||u.user}}</td>
+                        <td>
+                            <div class="has-text-grey" ng-show='!u.displayName || u.user==u.displayName'>
+                                (same)
+                            </div>
+                            <div class="" ng-show='u.displayName && u.user!=u.displayName'>
+                                {{u.user}}
+                            </div>
+                            <!-- {{u.displayName && u.user!=u.displayName?u.user:'(same)'}} -->
+                        </td>
+                        <td>{{u.isBanned?'Banned':'Not banned'}}</td>
+                        <td>
+                            <div ng-if='!u.interests || !u.interests.length' class='has-text-grey'>
+                                (none)
+                            </div>
+                            <table class="table" ng-show='u.interests && u.interests.length'>
+                                <thead>
+                                    <tr>
+                                        <th>Topic</th>
+                                        <th>Lvl</th>
+                                        <th><i class="fa fa-graduation-cap" title='Can this user teach this skill?'></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat='tp in u.interests'>
+                                        <td>{{tp.title}}</td>
+                                        <td>{{tp.lvl}}</td>
+                                        <td><i class="fa fa-{{tp.canTeach?'check':'times'}}"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <div class="is-fullwidth has-text-grey" ng-if='!u.teaching.length'>
+                                (This user is not currently mentoring anyone)
+                            </div>
+                            <table class='table is-bordered' ng-if='u.teaching.length'>
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Skills</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat='st in u.teaching'>
+                                        <td>{{st.user.displayName||st.user.user}}</td>
+                                        <td>
+                                            <div>
+                                                <ul class="check-list">
+                                                    <li ng-repeat='t in st.topics'>{{t}}</li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <button class="button is-info" title='Message this user' ng-click='showMsgDial(u)'><i class="fa fa-envelope"></i></button>
+                            <button class="button is-somewhat-dangerous" ng-click='toggleBan(u)' ng-if='!u.mod && !u.isBanned' title='Ban this user'><i class="fa fa-lock"></i></button>
+                            <button class="button is-success" ng-click='toggleBan(u)' ng-if='!u.mod && u.isBanned' title='Unban this user'><i class="fa fa-unlock"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal" ng-class='{"is-active":newMsg.show==true}'>
+            <div class="modal-background" ng-click='newMsg.show=false'></div>
+            <div class="modal-content modal-wide">
+                <div class="panel">
+                    <div class="panel-heading has-text-white has-background-grey-dark">
+                        MESSAGE
+                        <button class="button is-danger is-small is-pulled-right" ng-click='newMsg.show=false'>x</button>
+                    </div>
+                    <div class="panel-block has-background-white blocky content">
+                       <div class="is-fullwidth columns is-multiline">
+                            <div class="column is-full"></div>
+                           <div class="column notification notif-spaced is-one-fifth">To: </div>
+                           <div class="column is-four-fifths">
+                               {{newMsg.displayName||newMsg.user}}
+                           </div>
+                           <div class="column is-full"></div>
+                           <div class="column notification notif-spaced is-one-fifth">To: </div>
+                           <div class="column is-four-fifths">
+                               <textarea ng-model='newMsg.mdMsg' class="textarea" placeholder="Say something!"></textarea>
+                           </div>
+                           <div class="column is-full"></div>
+                           <div class="column is-full has-text-centered">
+                               <button class="button is-large is-success" ng-click='sendMsg()'><i class="fa-fa-envelope-o"></i>&nbsp;Send</button>
+                               <button class="button is-large is-somewhat-dangerous" ng-click='cancelMsg()'><i class="fa-fa-times"></i>&nbsp;Cancel</button>
+                           </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

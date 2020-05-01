@@ -1,0 +1,311 @@
+<div ng-controller='dash-cont' wait-for-data='$parent.user,topicObjs,activeLessons'>
+    <!-- REMOVED: postrender-action="getAll()" -->
+    <div class="message">
+        <div class="message-header"> My Profile </div>
+        <div class="message-body blocky is-fullwidth">
+            <div class="columns">
+                <div class="column is-two-fifths message">
+                    <div class="message-header"> Profile/Avatar </div>
+                    <div class="message-body has-background-grey-lighter">
+                        <div class="columns is-fullwidth is-multiline">
+                            <div class="column is-one-fifth notification notif-spaced">
+                                <div class="is-size-4">Profile Picture</div>
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">How about a nice, clear picture of you?</div> <img src="{{$parent.user.avatar}}" alt="" class="prof-pic">
+                                <label for="mob-file" class="button has-background-info has-text-white is-fullwidth is-hidden-desktop">
+                                    <i class="fa fa-upload"></i> Change Profile Pic
+                                    <input type="file" id='mob-file' class='is-hidden' fileread="user.avatar" onchange="angular.element(this).scope().loadFile(this)">
+                                </label>
+                                <div class="field is-hidden-touch">
+                                    <div class="file">
+                                        <label class="file-label">
+                                            <input class='file-input' type="file" fileread="user.avatar" onchange="angular.element(this).scope().loadFile(this)" />
+                                            <span class="file-cta button is-info">
+                                                <span class="file-icon"> <i class="fa fa-upload"></i> </span>
+                                                <span class="file-label"> Change Profile Pic</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-full">
+                                <hr>
+                            </div>
+                            <div class="column is-one-fifth notification notif-spaced">
+                                <div class="is-size-4">Display Name</div>
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">Want us to call you something other than your username?</div>
+                                <div class="field"> <input type="text" ng-model='user.displayName' class='input' placeholder='None (just call me {{user.user}})' ng-keyup='saveDebounce()'> </div>
+                            </div>
+                            <div class="column is-full">
+                                <hr>
+                            </div>
+                            <div class="column is-one-fifth notification notif-spaced">
+                                <div class="is-size-4">Company</div>
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">Who do you currently work for?</div>
+                                <div class="field"> <input type="text" ng-model='user.company' class='input' placeholder="No one/Don't wish to say" ng-keyup='saveDebounce()'> </div>
+                            </div>
+                            <div class="column is-full">
+                                <hr>
+                            </div>
+                            <div class="column is-one-fifth notification notif-spaced">
+                                <div class="is-size-4">Projects</div>
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">Any cool projects you've worked on?</div>
+                                <div class="is-fullwidth">
+                                    <table class="table is-fullwidth">
+                                        <thead>
+                                            <tr>
+                                                <th>Project Name</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat='prj in $parent.user.projects'>
+                                                <td>{{prj.name}}</td>
+                                                <td>
+                                                    <button class="button is-small is-info" title='View/Edit project information' ng-click='modProjDial(prj)'><i class="fa fa-cog"></i></button>
+                                                    <button class="button is-small is-danger" ng-click='deleteProj(prj.name)'><i class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr ng-if='!$parent.user.projects || !$parent.user.projects.length'>
+                                                <td colspan='2' class='is-italic'>You have not added any projects yet! </td>
+                                            </tr>
+                                        </tbody>
+                                    </table> <button class="button is-info is-large" ng-click='modProjDial()'><i class="fa fa-plus"></i>&nbsp; Add New Project</button>
+                                </div>
+                            </div>
+                            <div class="column is-full">
+                                <hr>
+                            </div>
+                            <div class="column is-one-fifth notification notif-spaced">
+                                <div class="is-size-4">Git Link</div>
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">Got a github/gitlab/bitbucket link?</div>
+                                <div class="field"> <input type="text" ng-model='user.gitLink' class='input' placeholder="None yet!" ng-keyup='saveDebounce()'> </div>
+                            </div>
+                            <div class="column is-full">
+                                <hr>
+                            </div>
+                            <div class="column is-one-fifth notification notif-spaced">
+                                <div class="is-size-4">Other</div>
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">Any other cool info you wanna let us know?</div>
+                                <div class="field"> <input type="text" ng-model='user.otherInfo' class='input' placeholder="Sorry, but I'm boring" ng-keyup='saveDebounce()'> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-three-fifths">
+                    <div class="message">
+                        <div class="message-header"> Skills </div>
+                        <div class="message-body has-background-grey-lighter">
+                            <div class="is-fullwidth is-italic notification">Skills you either know or want to know!</div>
+                            <table class="table is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>Skill Name<span class='is-hidden-desktop'>/Level</span></th>
+                                        <th class='is-hidden-mobile'>Level (1-10)</th>
+                                        <th>Can Teach?</th>
+                                        <th>Remove Skill</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat='sk in $parent.user.interests'>
+                                        <td>{{sk.title}} <div class="is-hidden-desktop">
+                                                <input type="number" ng-model='sk.lvl' class="number" change-re-focus change-fn='updateTopics()' min='0' max='10'>
+                                            </div>
+                                        </td>
+                                        <td class='is-hidden-mobile'><input type="number" ng-model='sk.lvl' class="number" change-re-focus change-fn='updateTopics()' min='0' max='10'></td>
+                                        <td>
+                                            <!-- ng-click='sk.canTeach=!sk.cantTeach;' --> <input type='checkbox' ng-model='sk.canTeach' change-re-focus change-fn='updateTopics()' id='skCanTeach-{{$index}}'> <label for="skCanTeach-{{$index}}">{{sk.canTeach?'Yes':'No'}}</label> </td>
+                                        <td> <button class="button is-info" ng-click='removeSkill(sk.title)'><i class="fa fa-trash"></i>&nbsp;Remove</button> </td>
+                                    </tr>
+                                    <tr ng-if='!user.interests.length'>
+                                        <td colspan='4' class='has-text-centered is-italic'> You have not yet added any skills! </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan='4' class='has-text-centered '> <button class="button is-large is-info" ng-click='addIntDial()'><i class="fa fa-plus"></i>&nbsp; Add New Skill</button> </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="message">
+                        <div class="message-header">
+                            My Current Lessons
+                        </div>
+                        <div class="message-body has-background-grey-lighter">
+                            <div class="notification has-background-white is-italic" ng-if='!activeLessons || !activeLessons.length'>
+                                You currently have no registered lessons! Head on over to the <a href="/match">Match</a> tab to connect with a mentor!
+                            </div>
+                            <div class="is-fullwidth columns is-multiline">
+                                <div class="message" ng-repeat='al in activeLessons'>
+                                    <div class="message-header has-text-dark has-background-grey-light">Lesson by: {{al.teacher.displayName||al.teacher.user}} <button class="button is-small is-info" title='Write a review for this teacher.' ng-click='writeReview(al.teacher)'><i class="fa fa-star"></i>&nbsp;<i class="fa fa-pencil"></i></button></div>
+                                    <div class="message-body chalkboard">
+                                        <strong>
+                                            Topics:
+                                        </strong>
+                                        <ul>
+                                            <li ng-repeat='t in al.topics'>{{t}}</li>
+                                        </ul>
+                                        <br><br>
+                                        <div class="is-fullwidth has-text-centered">
+                                            <button class="button is-small is-link" ng-click='messageTeacher(al)' title="Send a message to this lesson's mentor that you wish to discuss this lesson"><i class="fa fa-envelope"></i>&nbsp;Message Mentor</button>
+                                            <button class="button is-small is-info" ng-click='reqEndLesson(al)' title='Request that the mentor end this lesson'><i class="fa fa-times"></i>&nbsp;Request End</button>
+                                            <button class="button is-small is-danger" ng-click='reportLesson(al)' title='Report this lesson to the moderator team.'><i class="fa fa-exclamation-circle"></i>&nbsp;Report Lesson</button>
+                                        </div>
+                                        <br>
+                                        <div class="eraser is-pulled-right"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" ng-class='{"is-active":addInt.show==true}'>
+        <div class="modal-background" ng-click='addInt.show=false'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> Add Skill <button class="button is-danger is-small is-pulled-right" ng-click='addInt.show=false'>x</button> </div>
+                <div class="panel-block has-background-white blocky content">
+                    <div class="columns is-fullwidth is-multiline">
+                        <div class="column is-one-fifth notification notif-spaced"> Pick/Create Skill: </div>
+                        <div class="column is-four-fifths" id='skill-search' ng-click='clearSkillSearchBox()'>
+                            <input type="text" class="input" ng-model='skillSearch' ng-keyup='selectedTopic=null;topicWasClicked=false' ng-focus='selectedTopic=null;topicWasClicked=false'>
+                            <div class="auto-list" ng-blur='deFocusSkillSearch()'>
+                                <div ng-repeat='sk in skillSearchFilter()' ng-click='pickSkill(sk,$event);' ng-bind-html='sk.displayHL' ng-show='!topicWasClicked'></div>
+                                <div ng-if='skillSearch.length && skillSearchFilter().length===0 && !topicWasClicked' ng-click='$event.stopPropagation()'>
+                                    No matching skills found. Topic was clicked?{{topicWasClicked}}. <button class="button is-info" ng-click='doNewTopic(skillSearch)'>Create Skill</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Skill Information: </div>
+                        <div class="column is-four-fifths" ng-show='selectedTopic'>
+                            <div class="is-full"> <strong>Title:</strong> {{selectedTopic.display}} </div><br>
+                            <div class="is-full"> <strong>Description: </strong> {{selectedTopic.desc}}</div>
+                        </div>
+                        <div class="column is-four-fifths" ng-show='!hazTopic(topicToAdd) && addInt.isNew'>
+                            <div class="is-full notification is-warning is-italic"><i class="fa fa-exclamation-triangle is-size-4"></i>&nbsp;You're adding a skill we don't have in our system.<br> Please help us out and give it a cool (useful!) description!</div>
+
+                            <strong>Name:</strong>{{addInt.isNew}} <br>
+                            <strong>Description:</strong>
+                            <textarea ng-model='addInt.newDesc' class='textarea'></textarea>
+                        </div>
+                        <div class="column is-four-fifths" ng-show='!selectedTopic'>
+                            <div class="is-full is-italic"> (Please pick a skill title first!) </div>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Skill Level: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">Rate yourself on a scale of 1-10 for this skill.</div> <input type="number" class="number" ng-model='addInt.lvl' min='0' max='10'>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Can Teach: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">Can you teach this skill?</div> <input type='checkbox' ng-model='addInt.canTeach' id='addIntCanTeach'></input> <label for="addIntCanTeach">{{addInt.canTeach?'Yes':'No'}}</label>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-full has-text-centered"> 
+                            <button ng-show='!addInt.isNew' class="button is-info is-large" ng-click='addSkill()'><i class="fa fa-plus"></i>&nbsp; Add Skill</button> 
+                            <button ng-show='addInt.isNew' class="button is-info is-large" ng-click='createSkill()'><i class="fa fa-plus"></i>&nbsp; Create Skill</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" ng-class='{"is-active":modProj.show==true}'>
+        <div class="modal-background" ng-click='modProj.show=false'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> {{modProj.editMode?'Edit':'Add'}} Project <button class="button is-danger is-small is-pulled-right" ng-click='modProj.show=false'>x</button> </div>
+                <div class="panel-block has-background-white blocky content">
+                    <div class="columns is-fullwidth is-multiline">
+                        <div class="column is-one-fifth notification notif-spaced"> Name: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">Your project's name</div> <input type="text" class="input" ng-model='modProj.proj.name' placeholder='e.g., Widget App'>
+                        </div>
+                        <div class="column is-full">
+                            <div class="is-fullwidth notification is-danger" ng-if='countDups($parent.user.projects,"name")'><i class="fa fa-exclamation-triangle is-size-3"></i>&nbsp;That project name is already taken! Please pick another one.</div>
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Description (optional): </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">A brief description of what your project does</div> <textarea ng-model='modProj.proj.description' class='textarea is-fullwidth' placeholder='e.g., App to make widgets for local companies'></textarea>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Position: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">Your position (job) on the project</div> <input type="text" class="input" ng-model='modProj.proj.position' placeholder='e.g., Front-end engineer/designer'>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-full has-text-centered"> <button class="button is-info is-large" ng-disabled='countDups($parent.user.projects,"name")' ng-click='saveProjs()'><i class="fa fa-pencil"></i>&nbsp;{{modProj.editMode?'Edit':'Add'}} Project</button> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" ng-class='{"is-active":reviewPage.show==true}'>
+        <div class="modal-background" ng-click='reviewPage.show=false'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> Write review for: {{reviewPage.teacher.displayName||reviewPage.teacher.user}} <button class="button is-danger is-small is-pulled-right" ng-click='reviewPage.show=false'>x</button> </div>
+                <div class="panel-block has-background-white blocky content">
+                    <div class="columns is-fullwidth is-multiline">
+                        <div class="column is-one-fifth notification notif-spaced"> Comment: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">Tell us what you think about this mentor. Be nice!</div>
+                            <textarea class="textarea" ng-model='reviewPage.msg' placeholder='e.g., I learned so much!'></textarea>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Stars: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">How many stars (out of 5) do you think this mentor earned?</div>
+                            <i class="fa fa-star{{isActiveStar($index,str)?'':'-o'}} is-size-3 pokey star-fade" ng-mouseover='toggleOverStars(true,str);' ng-mouseout='toggleOverStars(false,str);' ng-repeat='str in reviewPage.starsArr track by $index' ng-click='reviewPage.stars =$index+1;'></i>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-one-fifth notification notif-spaced"> Hide Name: </div>
+                        <div class="column is-four-fifths">
+                            <div class="is-fullwidth is-italic">Would you like to make this review anonymous?</div>
+                            <input type="checkbox" ng-model='reviewPage.hideName' id='hide-name-box'> <label for="hide-name-box">Hide Name (make anonymous)</label>
+                        </div>
+                        <div class="column is-full">
+                            <hr>
+                        </div>
+                        <div class="column is-full has-text-centered"> <button class="button is-info is-large" ng-click='submitReview()'><i class="fa fa-pencil"></i>&nbsp;add/edit review</button> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,213 @@
+@import "./components/bulma";
+// @import "./components/chat";
+@import "./components/fonts.scss";
+// @import "./components/autocomplete.scss";
+html,
+body {
+  width: 100%;
+  margin: 0;
+  height: 100%; // padding-top: 40px;
+  background: #ddd;
+}
+
+#main-box {
+  padding: 10px;
+  padding-top: 60px;
+  height: 140vh;
+  // color: #fff;
+  // background:linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url('https://cdn.pixabay.com/photo/2017/07/03/11/02/timetable-2467247_960_720.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.is-fullwidth {
+  width: 100% !important;
+}
+
+.is-wide-btn {
+  width: 33%;
+}
+.blocky {
+  display: block !important;
+}
+.btn-pad-right {
+  margin-right: 5px;
+}
+.has-bottom-border {
+  border-bottom: 1px solid #222;
+}
+.no-underline a {
+  text-decoration: none !important;
+}
+.mail-view {
+  padding: 4px;
+  min-height: 210px;
+}
+.modal-wide {
+  width: 70%;
+}
+.is-one-tenth {
+  flex: none;
+  width: 10%;
+}
+$tenNames: two, three, four, five, six, seven, eight, nine;
+@for $i from 1 through length($tenNames) {
+  .is-#{nth($tenNames,$i)}-tenths {
+    width: ($i + 1) * 10%;
+    flex: none;
+  }
+}
+.check-list {
+  list-style-type: none !important;
+  & li::before {
+    content: "✓ ";
+  }
+}
+.prof-pic {
+  max-width: 300px;
+}
+.notif-spaced {
+  margin-top: 0.75rem;
+  background: #333;
+  color: #fff;
+}
+.dave-tabs {
+  border-bottom: none !important;
+  & li a {
+    text-decoration: none !important;
+    &:not(.is-active) {
+      background: #ddd;
+    }
+  }
+}
+.chalkboard {
+  background: #242;
+  font-family: "Papyrus";
+  color: #e0dbd1;
+  border-bottom: 1px solid #aaa;
+  border-bottom-width: 10px !important;
+  border-left: 1px solid #aaa;
+  border-left-width: 2px !important;
+  border-right: 1px solid #aaa;
+  border-right-width: 2px !important;
+  & li {
+    list-style-type: none;
+    &::before {
+      content: "✓ ";
+    }
+  }
+  & .eraser {
+    width: 20px;
+    height: 10px;
+    background: #777;
+    box-shadow: 1px 1px 1px #121;
+    position: relative;
+    bottom: 0px;
+    transition-duration: 0.2s;
+    &:hover {
+      transform: translateY(-5px) translateX(-1px);
+      box-shadow: 6px 2px 1px #121;
+    }
+  }
+}
+.pokey {
+  cursor: pointer;
+}
+.star-fade {
+  transition-duration: 0.5s;
+  &:hover {
+    color: #55c;
+  }
+}
+#bg-wait {
+  font-size: 24pt;
+  height: 102vh;
+  width: 100%;
+  background: hsla(0, 0%, 0%, 0.9);
+  position: fixed;
+  color: #fff;
+  text-align: center;
+  top: 0;
+  left: 0;
+  line-height: 12;
+  z-index: 99;
+}
+.loady-spin {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border-top: 2px solid #ddd;
+  border-left: 2px solid #ddd;
+  animation: spin 1s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes spin {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+.no-poke {
+  cursor: default !important;
+}
+@media screen and (max-width: 768px) {
+  .is-fullwidth-btn-mobile {
+    width: 100% !important;
+    margin-bottom: 2px;
+  }
+  .is-half-btn-mobile {
+    width: 48% !important;
+    margin-bottom: 2px;
+  }
+}
+.is-somewhat-dangerous {
+  background: #942138;
+  border-color: transparent;
+  color: #fff;
+  &:hover {
+    color: #fff;
+  }
+}
+.md-scroll-mask {
+  display: none;
+}
+input[type="email"]:invalid {
+  background-color: #fcc;
+}
+select {
+  option:last-child {
+    color: #555;
+  }
+}
+.auto-list {
+  & div {
+    padding: 3px;
+    padding-left:7px;
+    cursor: pointer;
+    background: #fff;
+    border-left: 1px solid #333;
+    border-right: 1px solid #333;
+    border-bottom: 1px solid #333;
+    &:last-child {
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+    &:hover{
+      background: #eee;
+    }
+  }
+}
+
+.modal.is-active:not(#bulmabox-diag){
+  // position:sticky;
+  // top:-70px;
+  & .modal-background{
+    background:none;
+  }
+  & .modal-content{
+    box-shadow: 0 0 15px #000;
+  }
+}

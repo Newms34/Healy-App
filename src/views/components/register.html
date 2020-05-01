@@ -1,0 +1,65 @@
+<div ng-controller='log-cont' class='columns'>
+    <div class="column is-one-third"></div>
+    <div class='column is-one-third panel'>
+        <div class='panel-heading is-primary'>
+            <h3 class='card-header-title is-primary'>Register</h3>
+        </div>
+        <div class='panel-block has-background-white'>
+            <form name='regForm' class='is-fullwidth'>
+                <div class='card card-content' ng-if='!cmmNoSecure'>
+                    Warning:
+                    <button class="button is-small is-danger is-pulled-right" ng-click='acceptNoSecure()'>x</button>
+                    <div class='is-size-7'>
+                        This app isn't 100% secure yet. Use at your own risk!
+                    </div>
+                </div>
+                <h4 class='col-md-offset-2 col-md-8 alert reg-grp'>Account Information</h4>
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" type="text" placeholder="Username" ng-model='user' ng-change='checkUser();' autocomplete="off">
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </p>
+                    <div class='notification is-danger' ng-if='!nameOkay'>This username is already in use!</div>
+                </div>
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" type="email" autocomplete="off" placeholder="Email" name='email' ng-model='email' ng-blur='checkEmail();'  title='Your email will not be show to others, and is only used for security purposes!'>
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-envelope-o"></i>
+                        </span>
+                    </p>
+                    <div class='notification is-danger' ng-if='emailBad'><i class="fa fa-times is-size-3"></i>&nbsp;This email doesn't appear to be valid!</div>
+                </div>
+                <div class="field">
+                    <p class="control has-icons-left">
+                        <input class="input" type="password" autocomplete="off" placeholder="Password" name='pwd' ng-model='pwd' ng-change='checkPwdStr()'>
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <input class="input" type="password" autocomplete="off" placeholder="Password (again)" name='pwdDup' ng-model='pwdDup' ng-blur='checkPwdDup()'>
+                        <span class="icon is-small is-left">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                    </p>
+                    <div class="is-fullwidth is-size-7 content" ng-show='pwd'>
+                        Password Strength: <span title='{{pwdStr.score}} out of 5 points'><i class="fa fa-star{{$index<pwdStr.score?'':'-o'}}" ng-repeat='st in pwdStrStars'></i></span>.
+                        <button class="button is-small is-somewhat-dangerous"><i class="fa fa-{{pwdStr.show?'times':'question-circle'}}" ng-click='pwdStr.show=!pwdStr.show'></i></button>
+                        <div ng-show='pwdStr.show'>
+                            <br>For a strong password, consider:
+                            <ul>
+                                <li ng-repeat='rec in pwdStr.recs'>{{rec.desc}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class='notification is-danger' ng-if='pwdNoDup'><i class="fa fa-times is-size-3"></i>&nbsp;Your passwords don't match!</div>
+                </div>
+                <button class='button is-link' type='submit' ng-click='register()'>Register</button>
+                <button class='button is-info' ng-click='goLog()'>I have an account</button>
+            </form>
+        </div>
+    </div>
+</div>

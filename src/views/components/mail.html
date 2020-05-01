@@ -1,0 +1,117 @@
+<div ng-controller='mail-cont'>
+    <div class="message">
+        <div class="message-header">Mailbox</div>
+        <div class="message-body">
+            <div class="tabs is-boxed is-large">
+                <ul>
+                    <li ng-class='{"is-active":!outMode}' ng-click='outMode=false' class='no-underline'><a><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa fa-envelope-o is-hidden-mobile"></i>&nbsp;Inbox</a></li>
+                    <li ng-class='{"is-active":outMode}' ng-click='outMode=true' class='no-underline'><a><i class="fa fa-envelope-o is-hidden-mobile"></i>&nbsp;<i class="fa fa-arrow-right"></i>&nbsp;Outbox</a> </li>
+                </ul>
+            </div>
+            <div class="is-fullwidth" ng-if='!outMode'>
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='im in $parent.user.inMsgs'>
+                            <td>{{im.from.displayName||im.from.user}}</td>
+                            <td>{{im.date|numToDate}}</td>
+
+                            <td>
+                                <button class="button is-fullwidth-btn-mobile is-success" title='View this message' ng-click='viewMsg(im)'><i class="fa fa-eye"></i>&nbsp;View</button>&nbsp;
+                                <button class="button is-fullwidth-btn-mobile is-info" title='Reply to this message' ng-click="replyMsg(im)"><i class="fa fa-mail-reply"></i>&nbsp;Reply</button> &nbsp;
+                                <button class="button is-fullwidth-btn-mobile is-danger" title='{{im.isRep?"This message has already been reported!":"Report this message to the moderator team"}}' ng-disabled='im.isRep' ng-click="reportMsg(im)"><i class="fa fa-exclamation-circle"></i>&nbsp;Report</button> &nbsp;
+                                <button class="button is-fullwidth-btn-mobile is-somewhat-dangerous" title='Delete this message' ng-click="delMsg(im)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
+                        </tr>
+                        <tr ng-if='!$parent.user || !$parent.user.inMsgs || !$parent.user.inMsgs.length'>
+                            <td colspan="3" class='is-italic has-text-centered'>No one has sent you any messages! Sad! </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="is-fullwidth" ng-if='outMode'>
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>To</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='om in $parent.user.outMsgs'>
+                            <td>{{getUserList(om.to)}}</td>
+                            <td>{{om.date|numToDate}}</td>
+                            <td>
+                                <button class="button is-success is-fullwidth-btn-mobile" title='View this message' ng-click='viewMsg(om)'><i class="fa fa-eye"></i>&nbsp;View</button> &nbsp;
+                                <button class="button is-somewhat-dangerous is-fullwidth-btn-mobile" title='Delete this message' ng-click="delMsg(om)"><i class="fa fa-trash"></i>&nbsp;Delete</button></td>
+                        </tr>
+                        <tr ng-if='!$parent.user || !$parent.user.outMsgs || !$parent.user.outMsgs.length'>
+                            <td colspan="3" class='is-italic has-text-centered'>You have not sent any messages!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> <br>
+            <div class="is-fullwidth has-text-centered"> <button class="button is-info is-large" ng-click='makeNewMsg()'> <i class="fa fa-plus is-size-4"></i>&nbsp;Compose Message </button> </div>
+        </div>
+    </div>
+    <div class="modal" ng-class='{"is-active":mailView.show}'>
+        <div class="modal-background" ng-click='mailView.show=false'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> {{mailView.title}} <button class="button is-somewhat-dangerous is-small is-pulled-right" ng-click='mailView.show=false'>x</button> </div>
+                <div class="panel-block blocky has-background-grey-lighter content">
+                    <div class="is-fullwidth has-text-centered">
+                        <button class="button is-small is-info" title='Reply to this message' ng-click="replyMsg(mailView)" ng-if='!mailView.toMode'><i class="fa fa-mail-reply"></i>&nbsp;Reply</button> &nbsp;
+                        <button class="button is-small is-danger" title='{{mailView.isRep?"This message has already been reported!":"Report this message to the moderator team"}}' ng-disabled='mailView.isRep' ng-click="reportMsg(mailView)" ng-if='!mailView.toMode'><i class="fa fa-exclamation-circle"></i>&nbsp;Report</button> &nbsp;
+                        <button class="button is-small is-somewhat-dangerous" title='Delete this message' ng-click="delMsg(mailView)"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+                    </div>
+                    <div class="is-fullwidth"><strong>Sent:</strong>&nbsp;{{mailView.date|numToDate}}</div>
+                    <hr>
+                    <div class="has-background-white mail-view contents" ng-bind-html='mailView.htmlMsg'> </div>
+                    <div class="is-fullwidth has-text-centered" ng-if='!mailView.toMode && mailView.isConMsg'>
+                        <br>
+                        <button class="button is-info is-large" title='Start Teaching!' ng-click="startTeach(mailView)"><i class="fa fa-graduation-cap"></i>&nbsp;Teach!</button><button class="button is-small is-default" ng-click='explStartTeach()'>?</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" ng-class='{"is-active":newMsg.show}'>
+        <div class="modal-background" ng-click='cancelSend()'></div>
+        <div class="modal-content modal-wide">
+            <div class="panel">
+                <div class="panel-heading is-link"> {{newMsg.isReply?'Reply to message':'New Message'}} <button class="button is-somewhat-dangerous is-small is-pulled-right" ng-click='cancelSend()'>x</button> </div>
+                <div class="panel-block blocky has-background-grey content">
+                    <div class="is-fullwidth has-background-grey-lighter mail-view" ng-if='newMsg.isReply'>
+                        <div class='is-italic'>On {{newMsg.isReply.date|numToDate}}, User {{newMsg.isReply.from.displayName||newMsg.isReply.from.user}} said:</div>
+                        <!-- {{newMsg.isReply}} -->
+                        <hr>
+                        <div ng-bind-html='newMsg.isReply.htmlMsg'></div>
+                    </div>
+                    <div class="is-fullwidth has-text-centered"> <br> </div>
+                    <div class="has-background-white mail-view"> <br>
+                        <div class="field is-fullwidth columns is-multiline">
+                            <div class='column is-one-tenth has-text-weight-bold has-text-centered'>To:&nbsp;</div>
+                            <div class="column is-nine-tenths is-fullwidth-btn-mobile notification has-background-grey columns is-multiline" style='min-height:3.5em'>
+                                <input type="text" class="input is-pulled-right is-hidden-desktop is-fullwidth column is-full" ng-model='newMsg.possUsr' placeholder='Add recipient' ng-keyup='newMsgAdd($event);' style='margin-bottom:2px;'>
+                                <input type="text" class="input is-pulled-left is-hidden-touch column is-one-fifth" ng-model='newMsg.possUsr' placeholder='Add recipient' ng-keyup='newMsgAdd($event);'>
+                                <div class="tag is-light btn-pad-right is-half-btn-mobile user-to-tag" data-name='{{u}}' ng-repeat='u in newMsg.to'>{{u.displayName||u.user}}
+                                    <button title='Remove this user' class="delete" ng-click='newMsgRem(u)'></button>
+                                </div>
+                            </div>
+                        </div>
+                        <textarea ng-model="newMsg.mdMsg" class="textarea"></textarea>
+                        <hr>
+                        <div class="is-fullwidth"> <button class="button is-info" ng-click='sendMsg()'><i class="fa fa-paper-plane"></i>&nbsp;Send</button> <button class="button is-somewhat-dangerous" ng-click='cancelSend()'><i class="fa fa-trash"></i>&nbsp;Discard</button> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

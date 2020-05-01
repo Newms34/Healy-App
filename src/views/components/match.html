@@ -1,0 +1,485 @@
+<div ng-controller='match-cont'>
+    <div class="message">
+        <div class="message-header has-text-centered">Matching</div>
+        <div class="message-body has-background-white">
+            <div class="tabs is-boxed is-fullwidth">
+                <ul class='dave-tabs'>
+                    <li ng-class="{'is-active':!viewReqLessons}">
+                        <a ng-click='viewReqLessons=false'>
+                            <span class="icon is-small"><i class="fa fa-handshake-o" aria-hidden="true"></i></span>
+                            <span class='is-hidden-mobile'>Match With Teacher</span>
+                        </a>
+                    </li>
+                    <li ng-class="{'is-active':viewReqLessons}">
+                        <a ng-click='regetReqLsns();viewReqLessons=true;'>
+                            <span class="icon is-small"><i class="fa fa-graduation-cap" aria-hidden="true"></i></span>
+                            <span class='is-hidden-mobile'>View Requested Lessons</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="is-fullwidth" ng-show='!viewReqLessons'>
+                <div class="is-fullwidth columns is-multiline">
+                    <div class="column is-full">
+                        <div class="message">
+                            <div class="message-header" id='at-head'>Available Skills</div>
+                            <div class="message-body is-fullwidth columns" id='avail-skills'>
+                               
+                                <!-- <input type="text" placeholder='Please wait (skills loading!)' class="input" id="autoComplete" ng-model='skillSearch' ng-blur='showNSR=false;'></input>
+
+                                <div class="is-fullwidth has-text-left" ng-if='selectedTopic'>
+                                    <strong>Skill:</strong>{{selectedTopic.title||''}} <br>
+                                    <strong>Description:</strong><br>{{selectedTopic.desc||''}}
+                                </div>
+                            </div>
+                            <div id="no_result" ng-click='clearSearch()' ng-show='showNSR'> No results!
+                                <button class="button is-small is-info is-pulled-right" ng-click='AddNewSkill($event)'>
+                                    <i class="fa fa-plus"></i> &nbsp;Create New Skill</button>
+                            </div> -->
+                            <!-- INTEREST LIST: {{$parent.user.interests}} -->
+                            <div class="column is-one-fifth notification notif-spaced">
+                                Add Skills
+                            </div>
+                            <div class="column is-four-fifths">
+                                <div class="is-fullwidth is-italic">
+                                    Pick some skills from your profile to search for mentors that can teach those skills. <br>Wanna add more skills? Head on over to the <a href="./">Profile</a> page to add more skills!
+                                </div>
+                                <hr>
+                                <strong>Desired Topic:</strong> 
+                                 <p class="select is-full">
+                                   <select placeholder='...loading' id='skill-box' ng-options='sk as sk.title for sk in $parent.user.interests' ng-model='selectedTopic'>
+                                        <option value="" selected disabled>(Pick a topic)</option>
+                                    </select>
+                                </p><br><br>
+                                <button ng-disabled='!selectedTopic' class="button is-wide-btn is-link" ng-click='addSearchTopic(selectedTopic)'><i class="fa fa-pencil"></i>&nbsp; Add Skill</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-full">
+                    <div class="message">
+                        <div class="message-header">Your Selected Skills</div>
+                        <div class="message-body">
+                            <div class="is-fullwidth is-italic" ng-show='!pickedTopics.length'>No skills selected!
+                                Pick
+                                some skills above!</div>
+                            <div class="is-fullwidth columns is-multiline" ng-show='pickedTopics.length'>
+
+                                <div class="column is-one-fifth-desktop is-full-mobile notification is-dark btn-pad-right" ng-repeat='t in pickedTopics' title='{{t.desc}}'>
+                                    <div class="is-fullwidth">
+                                        <strong>Skill</strong>:&nbsp;{{t.title}}
+                                    </div>
+                                    <div class="is-fullwidth">&nbsp;</div>
+                                    <div class="is-fullwidth">
+                                        Min Level: <select ng-model='t.min' ng-options='m.num as m.lbl for m in lvls' ng-change='changeTopList()'></select>
+                                    </div>
+                                    <div class="is-fullwidth">&nbsp;</div>
+                                    <div class="is-fullwidth has-text-centered">
+                                        <button ng-click='removeTopic(t)' class="button is-light"><i class="fa fa-times-circle"></i> Remove</button>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-full" ng-show='pickedTopics.length'>
+                <div class="message">
+                    <div class="message-header">Available Mentors</div>
+                    <div class="message-body">
+                        <div class="is-fullwidth is-italic" ng-show='!availTeachs.length'>We couldn't find any
+                            teachers that fit your criteria! Try removing some skills to get more results.
+                            <br>Alternatively, you can click the button below to request a lesson. You'll be
+                            connected with a teacher when and if one becomes available!
+                            <hr>
+                            <div class="is-fullwidth">
+                                <button class="button is-large is-info" ng-click='reqLess()'><i class="fa fa-question-circle"></i>&nbsp;Request Lesson</button>
+                            </div>
+                        </div>
+                        <div class="is-fullwidth" ng-show='availTeachs.length'>
+                            <div class="is-italic is-fullwidth has-tex">Click a mentor to connect with them!</div>
+                            <hr>
+                            <div class="columns is-fullwidth is-multiline">
+
+                                <div class="column is-one-half message" ng-repeat='mt in availTeachs'>
+                                    <!-- single mentor 'card' -->
+                                    <div class="message-body has-background-info blocky is-fullwidth">
+                                        <div class="columns is-fullwidth is-multiline">
+                                            <div class="column is-full has-text-centered has-text-weight-bold has-text-white is-size-4">
+                                                {{mt.displayName||mt.user}}
+                                                <div class='tag is-link' ng-if='mt.isDemoUser' title='This user does not actually exist, and is included for demonstration purposes only.'><i class="fa fa-exclamation-triangle"></i>&nbsp;Demo User</div>
+                                            </div>
+                                            <div class="column is-two-fifths">
+                                                <img src='{{mt.avatar}}' class="is-fullwidth">
+                                            </div>
+                                            <div class="column is-three-fifths is-size-7 has-background-white">
+                                                <div class="columns is-multiline">
+
+                                                    <div class="column is-full has-text-weight-bold is-size-4 has-text-centered">
+                                                        <i class="fa fa-cogs"></i>&nbsp;Skills:
+
+                                                    </div>
+                                                    <div class="column is-full has-bottom-border" ng-show='mt.interests.length'>
+                                                        <table class="table is-striped is-fullwidth">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Skill</th>
+                                                                    <th>Level</th>
+                                                                    <th><span class="is-hidden-desktop"><i class="fa fa-graduation-cap"></i></span><span class="is-hidden-touch">Teaching</span>?</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat='sk in mt.interests'>
+                                                                    <td>{{sk.title}}</td>
+                                                                    <td>{{sk.lvl}}</td>
+                                                                    <td ng-if='sk.canTeach'><i class="fa fa-check has-text-success"></i>
+                                                                    </td>
+                                                                    <td ng-if='!sk.canTeach'><i class="fa fa-times has-text-danger"></i>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="column is-full has-bottom-border" ng-show='!mt.interests.length'>
+                                                        {{mt.displayName||mt.user}} has not included any skills!
+                                                    </div>
+                                                    <div class="column is-full has-text-centered">
+                                                        <button class="button is-link" ng-click='doConnect(mt)' ng-if='!mt.isDemoUser'><i class="fa fa-handshake-o"></i>&nbsp;Connect!</button>
+                                                        <button class="button is-info" ng-click='showTchrInfo(mt)'><i class="fa fa-eye"></i>&nbsp;View Info</button>
+                                                        <button class="button is-default" disabled ng-if='mt.isDemoUser' title='This is a demo user!'><i class="fa fa-times"></i>&nbsp;Connect!</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column is-one-half" ng-if='availTeachs && availTeachs.length===1'>
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="is-fullwidth" ng-show='viewReqLessons'>
+            <!-- lesson cards -->
+            <div class="is-fullwidth columns">
+                <div class="column is-full is-italic has-text-centered" ng-if='!requestedLessons || !requestedLessons.length'>
+                    There are no requested lessons currently!
+                </div>
+                <div class="column is-one-fifth message is-info" ng-repeat='rl in requestedLessons'>
+                    <div class="message-header">Requested Lesson: {{rl.displayName||rl.user}}</div>
+                    <div class="message-body has-background-grey-lighter">
+                        <table class="table is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>Skill</th>
+                                    <th>Current Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat='t in rl.topics'>
+                                    <td>{{t.title}}</td>
+                                    <td>{{t.lvl}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="is-fullwidth notification" ng-if='!!rl.answerers && rl.answerers.length && rl.user == $parent.user.user'>
+                            <div class='is-fullwidth has-text-weight-bold'>Answerers</div>
+                            <div class='is-fullwidth is-size-7 is-italic'>The following people wanna teach you:</div>
+                            <hr>
+                            <div class="is-fullwidth" ng-repeat='an in rl.answerers'>
+                                {{an.displayName||an.user}} <button class="button is-small is-link is-pulled-right" title='Accept this mentor' ng-click='acceptMentor(an,rl)'><i class="fa fa-check"></i>&nbsp;Accept</button>
+                            </div>
+                        </div>
+                        <div class="is-fullwidth notification" ng-if='(!rl.answerers || !rl.answerers.length) && rl.user == $parent.user.user'>
+                            <div class='is-fullwidth is-italic'>No one's answered you yet! :(</div>
+
+                        </div>
+                        <div class="is-fullwidth has-text-centered">
+                            <!-- control buttons -->
+                            <button class="button is-link" ng-if='rl.user!=$parent.user.user && !rl.answerers.includes($parent.user.user)' title='Offer to teach this lesson' ng-click='answerRl(rl)'><i class="fa fa-thumbs-up"></i>&nbsp;Teach It!</button>
+                            <button class="button is-info" ng-if='rl.user!=$parent.user.user && rl.answerers.includes($parent.user.user)' title='Rescind your offer to teach this lesson' ng-click='noAnswerRl(rl)'><i class="fa fa-times"></i>&nbsp;Cancel Teaching Offer</button>
+                            <button class="button is-danger" ng-if='rl.user==$parent.user.user' ng-click='deleteRl(rl)'><i class="fa fa-trash"></i>&nbsp;Delete Request</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modals -->
+<div class="modal" ng-class='{"is-active":newTopic.show}'>
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="panel">
+            <div class="panel-heading is-link">
+                Create New Skill
+                <button class="button is-danger is-small is-pulled-right" ng-click='toggleNewTopicDia()'>x</button>
+            </div>
+            <div class="panel-block has-background-white blocky content">
+                <div class="is-italic">Your desired skill not included? Why not add it here?</div>
+                <div class="notification notif-spaced">
+                    First, give us a name for your skill. Examples:
+                    <br>
+                    <ul>
+                        <li>ReactJS</li>
+                        <li>Front-End Design</li>
+                        <li>Social Networking</li>
+                    </ul>
+                    <br>
+                    <input type="text" class="input" ng-model='newTopic.title' placeholder='Your Topic'>
+                </div>
+                <br>
+                <div class="notification notif-spaced">
+                    You can also give us a description for your topic if you want (optional!).
+                    <textarea ng-model='newTopic.desc' class='textarea'></textarea>
+                </div>
+                <div class="is-fullwidth has-text-centered">
+                    <div class="notification is-alert"><em>Note:</em> While you can use your new skill immediately, please be aware that
+                        <ol>
+                            <li>It's gonna be pretty unlikely that any teachers actually <em>have</em> this skill in their list of taught skills, so you'll probably need to use the "Request Lesson" button.</li>
+                            <li>It won't be included immediately in the list of globally-available skills, and will need to be voted in. This is a safety measure to prevent people from adding really awful skills like "Puppy-kicking" or "Talking on a cell-phone in a theater".</li>
+                        </ol>
+                    </div>
+                    <button class="button is-link" ng-click='addNewTopic()'>Add it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" ng-class='{"is-active":mentCon.show==true}'>
+    <div class="modal-background" ng-click='mentCon.show=false'></div>
+    <div class="modal-content modal-wide">
+        <div class="panel">
+            <div class="panel-heading is-link">
+                Connect With Mentor
+                <button class="button is-danger is-small is-pulled-right" ng-click='mentCon.show=false'>x</button>
+            </div>
+            <div class="panel-block has-background-white blocky content">
+                <div class="is-italic">Ready to connect? Just fill out the information below</div>
+                <div class="is-fullwidth">
+                    <!-- name -->
+                    <br>
+                    <div class="is-fullwidth columns has-background-grey-dark">
+                        <div class="column is-one-fifth notification notif-spaced">Name:</div>
+                        <div class="column is-four-fifths has-text-white">
+                            <div class="is-italic is-fullwidth">Here's who you're connecting with: </div>
+                            <div class="notification has-background-white has-text-grey-darker is-fullwidth">
+                                {{mentCon.displayName||mentCon.user}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="is-fullwidth">&nbsp;</div>
+                    <!-- topics -->
+                    <div class="is-fullwidth columns has-background-grey-dark">
+                        <div class="column is-one-fifth notification notif-spaced">Skills:</div>
+                        <div class="column is-four-fifths has-text-white">
+                            <div class="is-italic is-fullwidth">Here's a list of the skills you wanna learn from
+                                this mentor:</div>
+                            <div class="notification has-background-white has-text-grey-darker is-fullwidth">
+                                <ul class='check-list'>
+                                    <li ng-repeat='t in mentCon.topics'><i class="fa fa-check"></i> &nbsp;{{t}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="is-fullwidth">&nbsp;</div>
+                    <!-- Time Zone -->
+                    <div class="is-fullwidth columns has-background-grey-dark">
+                        <div class="column is-one-fifth notification notif-spaced">Best Times:</div>
+                        <div class="column is-four-fifths has-text-white">
+                            <div class="is-fullwidth is-italic">What times work best for you?</div>
+                            <div class="notification has-background-white has-text-grey-darker is-fullwidth">
+                                <div class="is-fullwidth">
+                                    <div class="has-text-weight-bold">From:</div>
+                                    <div class="select">
+                                        <select ng-model='mentCon.tz.from' ng-options='t.num as t.label for t in times'></select>
+                                    </div>
+                                </div>
+                                <div class="is-fullwidth">
+                                    <div class="has-text-weight-bold">To:</div>
+                                    <div class="select">
+                                        <select ng-model='mentCon.tz.to' ng-options='t.num as t.label for t in times'></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="is-fullwidth">&nbsp;</div>
+                    <!-- Custom Messij -->
+                    <div class="is-fullwidth columns has-background-grey-dark">
+                        <div class="column is-one-fifth notification notif-spaced">Additional Message:</div>
+                        <div class="column is-four-fifths has-text-white">
+                            <div class="is-fullwidth is-italic">
+                                Anything else you wanna say? We'd recommend "Hi" for starters!
+                            </div>
+                            <!-- <div class="notification has-background-white has-text-greis-fullwidth"></div> -->
+                            <textarea ng-model='mentCon.plusMdMsg' placeholder='Say something friendly!' class="textarea is-fullwidth"></textarea>
+                        </div>
+                    </div>
+                    <div class="is-fullwidth">&nbsp;</div>
+                    <div class="column is-full has-text-centered">
+                        <button class="button is-link is-large" ng-click='sendConnectMsg()'><i class="fa fa-check"></i>&nbsp;Connect!</button>
+                        <button class="button is-info is-large" ng-click='mentCon.show=false'><i class="fa fa-times"></i>&nbsp;Nevermind...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" ng-class='{"is-active":tchrInfo.show==true}'>
+    <div class="modal-background" ng-click='tchrInfo.show=false'></div>
+    <div class="modal-content modal-wide">
+        <div class="panel">
+            <div class="panel-heading has-text-white has-background-grey-dark">
+                Mentor Info: {{tchrInfo.tchr.displayName||tchrInfo.tchr.user}}
+                <button class="button is-danger is-small is-pulled-right" ng-click='tchrInfo.show=false'>x</button>
+            </div>
+            <div class="panel-block has-background-white blocky content">
+                <div class="is-fullwidth columns is-multiline">
+                    <div class="column is-full">&nbsp;</div>
+                    <div class="column is-full is-size-5 has-text-centered has-background-grey-lighter">
+                        <hr />About {{tchrInfo.tchr.displayName||tchrInfo.tchr.user}}
+                        <hr />
+                    </div>
+                    <div class="column is-one-fifth has-background-grey-dark has-text-white notification notif-spaced">
+                        Skills:
+                    </div>
+                    <div class="column is-four-fifths">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Skill</th>
+                                    <th>Experience (1-10)</th>
+                                    <th>Teaching?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat='skl in tchrInfo.tchr.interests'>
+                                    <td>{{skl.title}}</td>
+                                    <td>{{skl.lvl}}</td>
+                                    <td ng-if='skl.canTeach'><i class="fa fa-check has-text-success"></i>
+                                    </td>
+                                    <td ng-if='!skl.canTeach'><i class="fa fa-times has-text-danger"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="column is-one-fifth has-background-grey-dark has-text-white notification notif-spaced">
+                        Current company:
+                    </div>
+                    <div class="column is-four-fifths">
+                        {{tchrInfo.tchr.company||"(None given)"}}
+                    </div>
+                    <div class="column is-one-fifth has-background-grey-dark has-text-white notification notif-spaced">
+                        Github link:
+                    </div>
+                    <div class="column is-four-fifths">
+                        <div class="is-fullwidth columns">
+
+                            <div class="column is-one-tenth">&nbsp;</div>
+                            <div class="column is-nine-tenths is-italic" ng-if='!tchrInfo.tchr.gitLink'>
+                                No github link provided!<br /> A Github link can take you to a list of this mentor's publically-available projects.
+                            </div>
+                            <div class="class='column is-nine-tenths'">
+
+                                <a href="{{tchrInfo.tchr.gitLink}}" target="_blank">{{tchrInfo.tchr.gitLink}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-one-fifth has-background-grey-dark has-text-white notification notif-spaced">
+                        Projects:
+                    </div>
+                    <div class="column is-four-fifths">
+                        <div class="is-fullwidth columns is-multiline">
+                            <div class="column is-one-tenth">&nbsp;</div>
+                            <div class="column is-nine-tenths is-italic" ng-if='!tchrInfo.tchr.projects.length'>
+                                No projects given!
+                            </div>
+                            <div class="column is-one-third notification notif-spaced" ng-repeat='p in tchrInfo.tchr.projects'>
+                                <div class="is-fullwidth is-size-5"><em>Title:</em>&nbsp;{{p.name}}</div>
+                                <div class="is-fullwidth">
+                                    <em>Description:</em>&nbsp;{{p.description}}
+                                </div>
+                                <div class="is-fullwidth">
+                                    <em>Position:</em>&nbsp;{{p.position}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-full">&nbsp;</div>
+                    <div class="column is-full is-size-5 has-text-centered has-background-grey-lighter">
+                        <hr />What They've Taught
+                        <hr />
+                    </div>
+                    <div class="column is-one-fifth has-background-grey-dark has-text-white notification notif-spaced">
+                        Lessons:
+                    </div>
+                    <div class="column is-four-fifths">
+                        <div class="is-fullwidth columns is-multiline">
+                            <div class="column is-one-tenth">&nbsp;</div>
+                            <div class="column is-nine-tenths is-italic" ng-if='!tchrInfo.tchr.teaching.length'>
+                                This mentor hasn't started (or finished) any lessons yet!
+                            </div>
+                            <div class="column is-one-third notification notif-spaced contents" ng-repeat='t in tchrInfo.tchr.teaching' ng-if='!t.hidden'>
+                                <div class="is-fullwidth">
+                                    <strong>Student:</strong>
+                                    {{user.displayName||user.user}}
+                                </div>
+                                <div class="is-fullwidth">
+                                    <strong>Skills:</strong><br>
+                                    <ul>
+                                        <li ng-repeat='tsk in t.topics'>{{tsk}}</li>
+                                    </ul>
+                                </div>
+                                <div class="is-fullwidth">
+                                    <strong>Ongoing?:</strong>
+                                    {{t.active?'Yes':'No'}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-full">&nbsp;</div>
+                    <div class="column is-one-fifth has-background-grey-dark has-text-white notification notif-spaced">
+                        Reviews:
+                    </div>
+                    <div class="column is-four-fifths">
+                        <div class="is-fullwidth columns is-multiline">
+                            <div class="column is-one-tenth">&nbsp;</div>
+                            <div class="column is-nine-tenths is-italic" ng-if='!tchrInfo.tchr.reviews.length'>
+                                No one has reviewed this mentor yet! That may or may not be a good thing...
+                            </div>
+                            <div class="column is-one-third notification notif-spaced contents" ng-repeat='rv in tchrInfo.tchr.reviews'>
+                                <div class="is-fullwidth notification">
+                                    <div class="is-fullwidth is-italic">
+                                        "{{rv.rateText||'...'}}"
+                                    </div>
+                                    - {{!rv.hideName?(rv.rateUsr.displayName||rv.rateUsr.user):'(Anonymous)'}}
+                                </div>
+                                <div class="is-fullwidth" title='This user gave you a rating of {{rv.rateNum}} out of 5 stars.'>
+                                    <div class="" style='display:inline-block' ng-repeat='st in totalStars'>
+                                        <i class="fa fa-{{$index>rv.rateNum-1?'star-o':'star'}}"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-full">&nbsp;</div>
+                    <div class="column is-full has-text-centered">
+                        <button class="button is-link is-large" ng-click='tchrInfo.show=false;doConnect(tchrInfo.tchr)' ng-if='!mt.isDemoUser'><i class="fa fa-handshake-o"></i>&nbsp;Connect!</button>
+                        <button class="button is-info is-large" ng-click='tchrInfo.show=false'><i class="fa fa-times"></i>&nbsp;Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
